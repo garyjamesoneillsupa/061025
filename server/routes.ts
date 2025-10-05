@@ -485,38 +485,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { GoldStandardPODGenerationService } = await import('./services/gold-standard-pod-service');
       
-      // Production delivery data structure matching gold standard
+      // Get actual job data
+      const job = await storage.getJob(jobId);
+      if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      // Build address arrays with at least one item
+      const collectionAddr = [
+        job.collectionAddress?.line1,
+        job.collectionAddress?.line2,
+        job.collectionAddress?.city,
+        job.collectionAddress?.postcode
+      ].filter(Boolean);
+      
+      const deliveryAddr = [
+        job.deliveryAddress?.line1,
+        job.deliveryAddress?.line2,
+        job.deliveryAddress?.city,
+        job.deliveryAddress?.postcode
+      ].filter(Boolean);
+
+      // POD data structure matching POC template format
       const goldStandardDeliveryData = {
-        jobReference: `OVM-${Date.now()}`,
-        vehicleRegistration: 'DS20 FBB',
-        make: 'Mercedes-Benz',
-        model: 'C-Class',
-        mileageAtDelivery: '45,895',
-        fuelLevel: '5/8',
-        dateTime: new Date().toISOString(),
-        deliveryLocation: '789 Executive Plaza, Canary Wharf, London E14 5AB',
-        gpsCoordinates: '51.5054, -0.0235',
-        sameAsCollection: true,
-        newDamageMarkers: [],
-        weather: 'dry' as const,
-        vehicleCleanliness: 'clean' as const,
-        lightingConditions: 'light' as const,
-        customerFullName: 'Sarah Mitchell',
+        JOB_NUMBER: job.jobNumber || 'TBC',
+        COLLECTION_DATE: job.requestedCollectionDate ? new Date(job.requestedCollectionDate).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
+        COLLECTION_TIME: job.collectedAt ? new Date(job.collectedAt).toLocaleTimeString('en-GB') : new Date().toLocaleTimeString('en-GB'),
+        DRIVER_NAME: job.driver?.name || 'Driver TBC',
+        CUSTOMER_NAME: job.customer?.name || 'Customer TBC',
+        CUSTOMER_CONTACT: job.deliveryContact?.name || '',
+        COLLECTION_ADDRESS: collectionAddr.length > 0 ? collectionAddr : ['Address TBC'],
+        DELIVERY_ADDRESS: deliveryAddr.length > 0 ? deliveryAddr : ['Address TBC'],
+        VEHICLE_MAKE: job.vehicle?.make || 'Make TBC',
+        VEHICLE_REG: job.vehicle?.registration || 'Reg TBC',
+        VEHICLE_MILEAGE: 'Mileage TBC',
+        VEHICLE_FUEL: 'Fuel TBC',
+        LOGO: '',
+        EXTERIOR_PHOTOS: [],
+        INTERIOR_PHOTOS: [],
+        WHEELS_PHOTOS: [],
+        KEYS_V5_PHOTOS: [],
+        DAMAGE_PHOTOS: [],
+        DAMAGE_MARKERS: [],
         customerSignature: '',
-        customerNotes: 'Delivered in excellent condition as expected',
-        deliveryConfirmed: true,
-        originalCollectionData: {
-          damageCount: 0,
-          collectionDate: new Date(Date.now() - 86400000).toLocaleDateString('en-GB'),
-          collectionLocation: '123 Luxury Avenue, Mayfair, London W1K 2AN'
-        }
+        POINT_OF_CONTACT_NAME: job.customer?.name || '',
+        WEATHER_CONDITIONS: 'Fair',
+        LIGHTING_CONDITIONS: 'Good',
+        VEHICLE_CLEANLINESS: 'Clean'
       };
       
       const pdfBuffer = await GoldStandardPODGenerationService.generatePOD(goldStandardDeliveryData);
       console.log('🚀 Fresh POD generated successfully');
       
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="POD-${goldStandardDeliveryData.jobReference}-Professional.pdf"`);
+      res.setHeader('Content-Disposition', `attachment; filename="POD-${job.jobNumber}-Professional.pdf"`);
       res.send(pdfBuffer);
       
     } catch (error) {
