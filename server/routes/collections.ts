@@ -286,6 +286,44 @@ router.post('/complete', async (req, res) => {
   }
 });
 
+// Helper to create clean photo filenames
+function createCleanPhotoFilename(jobNumber: string, vehicleReg: string, category: string, photoIndex: number, stage: 'collection' | 'delivery' = 'collection'): string {
+  // Format date from job number (YYMMDDXXXX) to DD.MM.YY
+  const formatDate = (jn: string) => {
+    if (jn.length < 6) return 'Unknown';
+    const yy = jn.substring(0, 2);
+    const mm = jn.substring(2, 4);
+    const dd = jn.substring(4, 6);
+    return `${dd}.${mm}.${yy}`;
+  };
+  
+  const date = formatDate(jobNumber);
+  const stageName = stage.charAt(0).toUpperCase() + stage.slice(1);
+  
+  // Clean category names
+  const categoryMap: Record<string, string> = {
+    'v5': 'V5 Document',
+    'keys': 'Keys',
+    'serviceBook': 'Service Book',
+    'lockingWheelNut': 'Locking Wheel Nut',
+    'odometer': 'Odometer',
+    'fuel': 'Fuel Gauge',
+    'front': 'Front View',
+    'rear': 'Rear View',
+    'driverSide': 'Driver Side',
+    'passengerSide': 'Passenger Side',
+    'roof': 'Roof View',
+    'interior': 'Interior',
+    'wheels': 'Wheel',
+    'damage': 'Damage'
+  };
+  
+  const cleanCategory = categoryMap[category] || category;
+  const photoNumber = photoIndex > 0 ? ` ${photoIndex + 1}` : '';
+  
+  return `${stageName} - ${date} - ${vehicleReg} - ${cleanCategory}${photoNumber}.jpg`;
+}
+
 // Helper function to transfer auto-saved photos to job photo records
 async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: string, autoSaveData: any) {
   if (!autoSaveData) return;
@@ -297,6 +335,10 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
   console.log('📸 INTERIOR PHOTOS KEYS:', autoSaveData.interiorPhotos ? Object.keys(autoSaveData.interiorPhotos) : 'none');
   
   const { FileStorageService } = await import('../services/fileStorage');
+  
+  // Get vehicle registration from job
+  const job = await storage.getJob(jobId);
+  const vehicleReg = job?.vehicle?.registration || jobNumber;
   
   // Map of auto-save photo fields to categories
   const photoMappings = [
@@ -322,7 +364,8 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
         for (let i = 0; i < autoSaveData.exteriorPhotos[mapping.field].length; i++) {
           const photoData = autoSaveData.exteriorPhotos[mapping.field][i];
           if (photoData && photoData.startsWith('data:image/')) {
-            await savePhotoToDatabase(jobId, jobNumber, photoData, mapping.category, `${mapping.field}_${i}.jpg`, FileStorageService);
+            const filename = createCleanPhotoFilename(jobNumber, vehicleReg, mapping.category, i, 'collection');
+            await savePhotoToDatabase(jobId, jobNumber, photoData, mapping.category, filename, FileStorageService);
           }
         }
       }
@@ -336,7 +379,8 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
         for (let i = 0; i < photos.length; i++) {
           const photoData = photos[i];
           if (photoData && photoData.startsWith('data:image/')) {
-            await savePhotoToDatabase(jobId, jobNumber, photoData, 'interior', `interior_${area}_${i}.jpg`, FileStorageService);
+            const filename = createCleanPhotoFilename(jobNumber, vehicleReg, 'interior', i, 'collection');
+            await savePhotoToDatabase(jobId, jobNumber, photoData, 'interior', filename, FileStorageService);
           }
         }
       }
@@ -350,7 +394,8 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
         for (let i = 0; i < wheelData.photos.length; i++) {
           const photoData = wheelData.photos[i];
           if (photoData && photoData.startsWith('data:image/')) {
-            await savePhotoToDatabase(jobId, jobNumber, photoData, 'wheels', `wheel_${wheelKey}_${i}.jpg`, FileStorageService);
+            const filename = createCleanPhotoFilename(jobNumber, vehicleReg, 'wheels', i, 'collection');
+            await savePhotoToDatabase(jobId, jobNumber, photoData, 'wheels', filename, FileStorageService);
           }
         }
       }
@@ -365,7 +410,8 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
         for (let i = 0; i < marker.photos.length; i++) {
           const photoData = marker.photos[i];
           if (photoData && photoData.startsWith('data:image/')) {
-            await savePhotoToDatabase(jobId, jobNumber, photoData, 'damage', `damage_${markerIndex}_${i}.jpg`, FileStorageService);
+            const filename = createCleanPhotoFilename(jobNumber, vehicleReg, 'damage', markerIndex, 'collection');
+            await savePhotoToDatabase(jobId, jobNumber, photoData, 'damage', filename, FileStorageService);
           }
         }
       }
@@ -378,7 +424,8 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
       for (let i = 0; i < autoSaveData[mapping.field].length; i++) {
         const photoData = autoSaveData[mapping.field][i];
         if (photoData && photoData.startsWith('data:image/')) {
-          await savePhotoToDatabase(jobId, jobNumber, photoData, mapping.category, `${mapping.category}_${i}.jpg`, FileStorageService);
+          const filename = createCleanPhotoFilename(jobNumber, vehicleReg, mapping.category, i, 'collection');
+          await savePhotoToDatabase(jobId, jobNumber, photoData, mapping.category, filename, FileStorageService);
         }
       }
     }
