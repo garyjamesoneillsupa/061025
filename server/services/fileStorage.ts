@@ -274,8 +274,10 @@ export class FileStorageService {
     // Compress the watermarked receipt image with premium quality for receipts
     const compressionResult = await ImageCompressionService.compressImage(watermarkedBuffer, 'expense', false);
     
-    // Generate filename: {type}_receipt_{jobNumber} ({vehicleReg}).jpg
-    const fileName = `${expenseType}_receipt_${jobNumber} (${vehicleReg}).jpg`;
+    // Generate clean filename: Expense - DD.MM.YY - Type (Reg).jpg
+    const dateFromJobNumber = this.formatDateFromJobNumber(jobNumber);
+    const capitalizedType = expenseType.charAt(0).toUpperCase() + expenseType.slice(1);
+    const fileName = `Expense - ${dateFromJobNumber} - ${capitalizedType} (${vehicleReg}).jpg`;
     const filePath = path.join(expensesPath, fileName);
     fs.writeFileSync(filePath, compressionResult.compressed);
     
@@ -290,6 +292,15 @@ export class FileStorageService {
         compressionRatio: compressionResult.compressionRatio
       }
     };
+  }
+  
+  // Helper to format date from job number (YYMMDDXXXX) to DD.MM.YY
+  private static formatDateFromJobNumber(jobNumber: string): string {
+    if (jobNumber.length < 6) return 'Unknown';
+    const yy = jobNumber.substring(0, 2);
+    const mm = jobNumber.substring(2, 4);
+    const dd = jobNumber.substring(4, 6);
+    return `${dd}.${mm}.${yy}`;
   }
 
   // Get all expense receipts for a job
