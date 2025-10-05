@@ -321,7 +321,7 @@ function createCleanPhotoFilename(jobNumber: string, vehicleReg: string, categor
   const cleanCategory = categoryMap[category] || category;
   const photoNumber = photoIndex > 0 ? ` ${photoIndex + 1}` : '';
   
-  return `${stageName} - ${date} - ${vehicleReg} - ${cleanCategory}${photoNumber}.jpg`;
+  return `${cleanCategory}${photoNumber} - ${vehicleReg} - ${stageName} (${date}).jpg`;
 }
 
 // Helper function to transfer auto-saved photos to job photo records

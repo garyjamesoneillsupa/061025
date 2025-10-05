@@ -274,10 +274,11 @@ export class FileStorageService {
     // Compress the watermarked receipt image with premium quality for receipts
     const compressionResult = await ImageCompressionService.compressImage(watermarkedBuffer, 'expense', false);
     
-    // Generate clean filename: Expense - DD.MM.YY - Type (Reg).jpg
+    // Generate clean filename: Type - Reg - Stage (DD.MM.YY).jpg
     const dateFromJobNumber = this.formatDateFromJobNumber(jobNumber);
     const capitalizedType = expenseType.charAt(0).toUpperCase() + expenseType.slice(1);
-    const fileName = `Expense - ${dateFromJobNumber} - ${capitalizedType} (${vehicleReg}).jpg`;
+    const stageName = stage.charAt(0).toUpperCase() + stage.slice(1);
+    const fileName = `${capitalizedType} - ${vehicleReg} - ${stageName} (${dateFromJobNumber}).jpg`;
     const filePath = path.join(expensesPath, fileName);
     fs.writeFileSync(filePath, compressionResult.compressed);
     
