@@ -191,14 +191,12 @@ export class PLReportPDFService {
 
     // Column definitions
     const columns = [
-      { key: "jobNumber", label: "Job", width: 70 },
-      { key: "customerName", label: "Customer", width: 100 },
-      { key: "date", label: "Date", width: 70 },
-      { key: "movementFee", label: "Revenue", width: 60, align: "right" as const },
-      { key: "fuelPassThrough", label: "Fuel", width: 55, align: "right" as const },
-      { key: "otherExpenses", label: "Expenses", width: 60, align: "right" as const },
-      { key: "driverWage", label: "Wages", width: 60, align: "right" as const },
-      { key: "netProfit", label: "Profit", width: 60, align: "right" as const },
+      { key: "jobNumber", label: "Job Number", width: 100 },
+      { key: "movementFee", label: "Revenue", width: 80, align: "right" as const },
+      { key: "fuelPassThrough", label: "Fuel (Pass-through)", width: 90, align: "right" as const },
+      { key: "otherExpenses", label: "Expenses", width: 80, align: "right" as const },
+      { key: "driverWage", label: "Wages (50%)", width: 80, align: "right" as const },
+      { key: "netProfit", label: "Net Profit", width: 85, align: "right" as const },
     ];
 
     const tableWidth = pageWidth - margin * 2;
@@ -265,53 +263,38 @@ export class PLReportPDFService {
       });
       xPos += columns[0].width;
 
-      // Customer Name (truncate if too long)
-      const customerName = job.customerName.length > 20 
-        ? job.customerName.substring(0, 17) + "..."
-        : job.customerName;
-      doc.text(customerName, xPos, yPos, {
+      // Movement Fee
+      doc.text(`£${job.movementFee.toFixed(2)}`, xPos, yPos, {
         width: columns[1].width,
+        align: "right",
       });
       xPos += columns[1].width;
 
-      // Date
-      doc.text(format(new Date(job.date), "dd MMM yy"), xPos, yPos, {
+      // Fuel Pass-through
+      doc.fillColor("#94a3b8").text(`£${job.fuelPassThrough.toFixed(2)}`, xPos, yPos, {
         width: columns[2].width,
+        align: "right",
       });
       xPos += columns[2].width;
 
-      // Movement Fee
-      doc.text(`£${job.movementFee.toFixed(2)}`, xPos, yPos, {
+      // Other Expenses
+      doc.fillColor(this.COLORS.warning).text(`£${job.otherExpenses.toFixed(2)}`, xPos, yPos, {
         width: columns[3].width,
         align: "right",
       });
       xPos += columns[3].width;
 
-      // Fuel Pass-through
-      doc.fillColor("#94a3b8").text(`£${job.fuelPassThrough.toFixed(2)}`, xPos, yPos, {
+      // Driver Wage
+      doc.fillColor("#ca8a04").text(`£${job.driverWage.toFixed(2)}`, xPos, yPos, {
         width: columns[4].width,
         align: "right",
       });
       xPos += columns[4].width;
 
-      // Other Expenses
-      doc.fillColor(this.COLORS.warning).text(`£${job.otherExpenses.toFixed(2)}`, xPos, yPos, {
-        width: columns[5].width,
-        align: "right",
-      });
-      xPos += columns[5].width;
-
-      // Driver Wage
-      doc.fillColor("#ca8a04").text(`£${job.driverWage.toFixed(2)}`, xPos, yPos, {
-        width: columns[6].width,
-        align: "right",
-      });
-      xPos += columns[6].width;
-
       // Net Profit
       const profitColor = job.netProfit >= 0 ? this.COLORS.success : this.COLORS.error;
       doc.fillColor(profitColor).text(`£${job.netProfit.toFixed(2)}`, xPos, yPos, {
-        width: columns[7].width,
+        width: columns[5].width,
         align: "right",
       });
 
@@ -349,36 +332,36 @@ export class PLReportPDFService {
       }
     );
 
-    doc.text("TOTALS", xPos, yPos, { width: columns[0].width + columns[1].width + columns[2].width });
-    xPos += columns[0].width + columns[1].width + columns[2].width;
+    doc.text("TOTALS", xPos, yPos, { width: columns[0].width });
+    xPos += columns[0].width;
 
     doc.text(`£${totals.movementFee.toFixed(2)}`, xPos, yPos, {
+      width: columns[1].width,
+      align: "right",
+    });
+    xPos += columns[1].width;
+
+    doc.fillColor("#94a3b8").text(`£${totals.fuelPassThrough.toFixed(2)}`, xPos, yPos, {
+      width: columns[2].width,
+      align: "right",
+    });
+    xPos += columns[2].width;
+
+    doc.fillColor(this.COLORS.warning).text(`£${totals.otherExpenses.toFixed(2)}`, xPos, yPos, {
       width: columns[3].width,
       align: "right",
     });
     xPos += columns[3].width;
 
-    doc.fillColor("#94a3b8").text(`£${totals.fuelPassThrough.toFixed(2)}`, xPos, yPos, {
+    doc.fillColor("#ca8a04").text(`£${totals.driverWage.toFixed(2)}`, xPos, yPos, {
       width: columns[4].width,
       align: "right",
     });
     xPos += columns[4].width;
 
-    doc.fillColor(this.COLORS.warning).text(`£${totals.otherExpenses.toFixed(2)}`, xPos, yPos, {
-      width: columns[5].width,
-      align: "right",
-    });
-    xPos += columns[5].width;
-
-    doc.fillColor("#ca8a04").text(`£${totals.driverWage.toFixed(2)}`, xPos, yPos, {
-      width: columns[6].width,
-      align: "right",
-    });
-    xPos += columns[6].width;
-
     const profitColor = totals.netProfit >= 0 ? this.COLORS.success : this.COLORS.error;
     doc.fillColor(profitColor).text(`£${totals.netProfit.toFixed(2)}`, xPos, yPos, {
-      width: columns[7].width,
+      width: columns[5].width,
       align: "right",
     });
   }
