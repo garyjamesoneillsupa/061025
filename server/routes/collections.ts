@@ -337,8 +337,16 @@ async function transferAutoSavedPhotosToJobRecords(jobId: string, jobNumber: str
   const { FileStorageService } = await import('../services/fileStorage');
   
   // Get vehicle registration from job
-  const job = await storage.getJob(jobId);
-  const vehicleReg = job?.vehicle?.registration || jobNumber;
+  const [job] = await db
+    .select({
+      vehicleReg: vehicles.registration
+    })
+    .from(jobs)
+    .leftJoin(vehicles, eq(jobs.vehicleId, vehicles.id))
+    .where(eq(jobs.id, jobId))
+    .limit(1);
+  
+  const vehicleReg = job?.vehicleReg || jobNumber;
   
   // Map of auto-save photo fields to categories
   const photoMappings = [
