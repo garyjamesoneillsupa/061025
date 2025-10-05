@@ -125,10 +125,36 @@ export default function Reports() {
   };
 
   const handleExportPDF = async () => {
-    toast({
-      title: "Coming Soon",
-      description: "PDF export is not yet implemented",
-    });
+    try {
+      const params = new URLSearchParams({
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: endDate.toISOString().split('T')[0]
+      });
+      
+      const response = await fetch(`/api/reports/export-pdf?${params}`);
+      if (!response.ok) throw new Error('Failed to generate PDF export');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `PL_Report_${format(startDate, 'yyyy-MM-dd')}_${format(endDate, 'yyyy-MM-dd')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Success",
+        description: "P&L report PDF downloaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF export",
+        variant: "destructive",
+      });
+    }
   };
 
   const chartData = useMemo(() => {

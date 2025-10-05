@@ -5834,7 +5834,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'startDate and endDate are required' });
       }
 
-      res.status(501).json({ message: 'PDF export not yet implemented' });
+      const start = new Date(startDate as string);
+      const end = new Date(endDate as string);
+      
+      const [jobs, expenses, wages] = await Promise.all([
+        storage.getJobsForReport(start, end),
+        storage.getExpensesForReport(start, end),
+        storage.getWagesForReport(start, end)
+      ]);
+
+      let totalRevenue = 0;
+      let passThroughExpenses = 0;
+      let absorbedExpenses = 0;
+      let totalWages = 0;
+
+      const jobsWithDetails = jobs.map(job => {
+        const movementFee = parseFloat(job.totalMovementFee?.toString() || '0');
+        const driverWage = movementFee * 0.5;
+        
+        const jobExpenses = job.expenses || [];
+        const fuelPassThrough = jobExpenses
+          .filter(e => e.type === 'fuel' && e.chargeToCustomer)
+          .reduce((sum, e) => sum + parseFloat(e.amount?.toString() || '0'), 0);
+        
+        const otherExpenses = jobExpenses
+          .filter(e => !e.chargeToCustomer || e.type !== 'fuel')
+          .reduce((sum, e) => sum + parseFloat(e.amount?.toString() || '0'), 0);
+
+        const netProfit = movementFee - otherExpenses - driverWage;
+
+        totalRevenue += movementFee;
+        passThroughExpenses += fuelPassThrough;
+        absorbedExpenses += otherExpenses;
+        totalWages += driverWage;
+
+        return {
+          id: job.id,
+          jobNumber: job.jobNumber,
+          customerName: job.customer?.name || 'Unknown',
+          date: job.deliveredAt,
+          movementFee,
+          fuelPassThrough,
+          otherExpenses,
+          driverWage,
+          netProfit
+        };
+      });
+
+      const netProfit = totalRevenue - absorbedExpenses - totalWages;
+
+      const reportData = {
+        summary: {
+          totalRevenue,
+          passThroughExpenses,
+          absorbedExpenses,
+          totalWages,
+          netProfit
+        },
+        jobs: jobsWithDetails,
+        startDate: start,
+        endDate: end
+      };
+
+      const { PLReportPDFService } = await import('./services/pl-report-pdf');
+      const pdfBuffer = await PLReportPDFService.generateReport(reportData);
+
+      const filename = `PL_Report_${start.toISOString().split('T')[0]}_${end.toISOString().split('T')[0]}.pdf`;
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(pdfBuffer);
     } catch (error) {
       console.error('Error generating PDF export:', error);
       res.status(500).json({ message: 'Failed to generate PDF export' });
