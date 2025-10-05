@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>OVM - Vehicle Movement Software</title>
+    <meta name="description" content="Professional vehicle movement software for transport logistics and fleet operations">
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#111827">
+    <meta name="msapplication-navbutton-color" content="#111827">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- iOS Specific PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OVM">
+    <link rel="apple-touch-icon" href="/attached_assets/avatar_1753922692670.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/attached_assets/avatar_1753922692670.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/attached_assets/avatar_1753922692670.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/attached_assets/avatar_1753922692670.png">
+    
+    <!-- iOS Launch Screen -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-startup-image" href="/attached_assets/avatar_1753922692670.png">
+    
+    <!-- Light theme styling to match driver portal instantly -->
+    <style>
+      html, body {
+        background: #f9fafb !important; /* Same as bg-gray-50 */
+        color: #111827;
+        margin: 0;
+        padding: 0;
+      }
+      #root {
+        min-height: 100vh;
+        background: #f9fafb !important; /* Same as bg-gray-50 */
+      }
+      /* Light status bar to match driver portal */
+      :root {
+        color-scheme: light;
+      }
+      /* Seamless notch integration */
+      @supports (padding-top: env(safe-area-inset-top)) {
+        html {
+          padding-top: env(safe-area-inset-top);
+          background: #f9fafb !important;
+        }
+      }
+    </style>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/attached_assets/avatar_1753922692670.png" as="image">
+    <link rel="preload" href="/src/main.tsx" as="script">
+    <link rel="modulepreload" href="/src/App.tsx">
+    
+    <!-- DNS prefetch for better loading -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    
+    <!-- Reduce font loading delay -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Simplified initialization without service worker interference -->
+    <script>
+      // Disable service worker temporarily to fix corruption issues
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(registration => registration.unregister());
+        });
+      }
+      
+      // Clear problematic caches
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => caches.delete(name));
+        });
+      }
+      
+      console.log('Service worker disabled, caches cleared');
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>

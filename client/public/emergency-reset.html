@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVM - Resetting App</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+        .reset-container {
+            text-align: center;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { margin: 0 0 1rem; font-size: 1.5rem; }
+        p { margin: 0.5rem 0; opacity: 0.9; }
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-container">
+        <div class="spinner"></div>
+        <h1>Resetting OVM App</h1>
+        <p>Clearing corrupted cache and reloading...</p>
+        <p id="status">Please wait...</p>
+        <button class="btn" onclick="forceReload()" id="reload-btn" style="display: none;">
+            Force Reload Now
+        </button>
+    </div>
+
+    <script>
+        async function clearEverything() {
+            const status = document.getElementById('status');
+            const reloadBtn = document.getElementById('reload-btn');
+            
+            try {
+                status.textContent = 'Clearing service workers...';
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(reg => reg.unregister()));
+                }
+                
+                status.textContent = 'Clearing all caches...';
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                }
+                
+                status.textContent = 'Clearing storage...';
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                status.textContent = 'Reloading in 3 seconds...';
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+                
+                // Show manual reload button after 5 seconds
+                setTimeout(() => {
+                    reloadBtn.style.display = 'inline-block';
+                }, 5000);
+                
+            } catch (error) {
+                status.textContent = 'Reset completed. Click reload button.';
+                reloadBtn.style.display = 'inline-block';
+            }
+        }
+        
+        function forceReload() {
+            window.location.href = '/?reset=' + Date.now();
+        }
+        
+        // Start the reset process
+        clearEverything();
+    </script>
+</body>
+</html>

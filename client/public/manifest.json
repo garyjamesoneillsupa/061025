@@ -1,0 +1,40 @@
+{
+  "name": "OVM - Vehicle Movement Software",
+  "short_name": "OVM",
+  "description": "Professional vehicle movement software for transport logistics",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00ABE7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/attached_assets/avatar_1753922692670.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/attached_assets/avatar_1753922692670.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/attached_assets/avatar_1753922692670.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/attached_assets/avatar_1753922692670.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "id": "ovm-pro-vehicle-transport",
+  "prefer_related_applications": false
+}

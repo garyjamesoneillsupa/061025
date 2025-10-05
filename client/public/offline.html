@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVM Pro - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #00ABE7, #0096D1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .offline-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+        
+        h1 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #F59E0B;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .info-box {
+            background: #EFF6FF;
+            border: 1px solid #DBEAFE;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #1E40AF;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            color: #3730A3;
+            font-size: 14px;
+        }
+        
+        .info-box li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .info-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10B981;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M1.04 13.9l.464.464c.975-.975 2.255-1.462 3.535-1.462 1.281 0 2.56.487 3.536 1.462l.707-.707c-1.17-1.17-2.707-1.755-4.243-1.755s-3.073.585-4.243 1.755l.244.244zm7.07 7.071l1.415-1.414c-.391-.391-.902-.586-1.414-.586s-1.024.195-1.414.586l-.707.707c.582.582 1.343.873 2.12.873s1.54-.291 2.122-.873l-.707-.707c-.39.39-.902.585-1.414.585-.512 0-1.023-.195-1.414-.585zm3.536-3.535l.707-.708c-.78-.78-1.804-1.17-2.828-1.17s-2.049.39-2.829 1.17l.707.708c.585-.586 1.354-.879 2.122-.879s1.537.293 2.121.879zM22 2l-2 2.414L14.414 2 12 4.414 17.586 10 12 15.586 14.414 18l6-2.414L22 18l-2.414-6L22 6V2z"/>
+            </svg>
+        </div>
+        
+        <h1>You're Offline</h1>
+        <p>Don't worry! Your work is saved locally and will sync automatically when you're back online.</p>
+        
+        <div class="status-indicator">
+            Offline Mode Active
+        </div>
+        
+        <div class="info-box">
+            <h3>What you can do offline:</h3>
+            <ul>
+                <li>Continue viewing assigned jobs</li>
+                <li>Complete collection process</li>
+                <li>Take photos and signatures</li>
+                <li>Record expenses</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

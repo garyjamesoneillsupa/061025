@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222, 47%, 11%);
+  --muted: hsl(220, 14%, 96%);
+  --muted-foreground: hsl(220, 9%, 46%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 47%, 11%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 47%, 11%);
+  --border: hsl(220, 13%, 91%);
+  --input: hsl(220, 13%, 91%);
+  --primary: hsl(196, 100%, 45%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(220, 14%, 96%);
+  --secondary-foreground: hsl(222, 47%, 11%);
+  --accent: hsl(196, 100%, 45%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(196, 100%, 45%);
+  --radius: 0.75rem;
+
+  /* Job status colors - Professional palette */
+  --job-grey: hsl(220, 9%, 46%);
+  --job-hot-pink: hsl(330, 81%, 60%);
+  --job-amber: hsl(38, 92%, 50%);
+  --job-green: hsl(142, 71%, 45%);
+  --job-blue: hsl(196, 100%, 45%);
+  --job-black: hsl(222, 47%, 11%);
+  
+  /* Modern professional colors */
+  --success: hsl(142, 71%, 45%);
+  --warning: hsl(38, 92%, 50%);
+  --info: hsl(201, 96%, 32%);
+  --surface: hsl(0, 0%, 99%);
+}
+
+.dark {
+  --background: hsl(222, 47%, 11%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(217, 33%, 17%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --popover: hsl(222, 47%, 11%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(217, 33%, 17%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(217, 33%, 17%);
+  --input: hsl(217, 33%, 17%);
+  --primary: hsl(196, 100%, 45%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(217, 33%, 17%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(196, 100%, 45%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(196, 100%, 45%);
+  --radius: 0.75rem;
+  
+  /* Modern professional colors */
+  --success: hsl(142, 71%, 45%);
+  --warning: hsl(38, 92%, 50%);
+  --info: hsl(201, 96%, 32%);
+  --surface: hsl(217, 33%, 14%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .job-status-created {
+    @apply bg-gray-500 text-white;
+  }
+  
+  .job-status-assigned {
+    @apply bg-pink-500 text-white;
+  }
+  
+  .job-status-collected {
+    @apply bg-amber-500 text-white;
+  }
+  
+  .job-status-delivered {
+    @apply bg-green-500 text-white;
+  }
+  
+  .job-status-invoiced {
+    @apply bg-blue-500 text-white;
+  }
+  
+  .job-status-paid {
+    @apply bg-black text-white;
+  }
+
+  .status-dot-created {
+    @apply bg-gray-500;
+  }
+  
+  .status-dot-assigned {
+    @apply bg-pink-500;
+  }
+  
+  .status-dot-collected {
+    @apply bg-amber-500;
+  }
+  
+  .status-dot-delivered {
+    @apply bg-green-500;
+  }
+  
+  .status-dot-invoiced {
+    @apply bg-blue-500;
+  }
+  
+  .status-dot-paid {
+    @apply bg-black;
+  }
+
+  .metrics-card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow;
+  }
+  
+  /* Modern UI components */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl;
+  }
+  
+  .primary-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700;
+  }
+  
+  .success-gradient {
+    @apply bg-gradient-to-r from-green-600 to-green-700;
+  }
+  
+  .warning-gradient {
+    @apply bg-gradient-to-r from-amber-500 to-amber-600;
+  }
+  
+  /* Professional status indicators */
+  .status-indicator {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .status-indicator-active {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+  }
+  
+  .status-indicator-pending {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
+  }
+  
+  .status-indicator-complete {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+  
+  /* Modern button styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all;
+  }
+  
+  .btn-success {
+    @apply bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all;
+  }
+
+  /* Mobile safe area for bottom navigation */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+  }
+}
