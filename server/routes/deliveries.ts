@@ -214,8 +214,8 @@ router.post('/complete', async (req, res) => {
         });
         
         // Generate POD with ALL DATA including photos and damage markers
-        const { FlawlessPODService } = await import('../services/flawless-pod-generation');
-        await FlawlessPODService.generatePOD({
+        const { GoldStandardPODGenerationService } = await import('../services/gold-standard-pod-service');
+        await GoldStandardPODGenerationService.generatePOD({
           JOB_NUMBER: job.jobNumber,
           COLLECTION_DATE: new Date(completionData.completedAt).toLocaleDateString('en-GB'),
           COLLECTION_TIME: new Date(completionData.completedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),

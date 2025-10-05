@@ -783,8 +783,17 @@ export default function ProductionDeliveryWorkflow({
 
       // ⚡ LIGHTNING FAST: Send ONLY signature + timestamp (all data already auto-saved!)
       const completionPayload = {
+        jobId: job.id,
+        customerName: data.customerName,
         signature: data.signature,
-        completedAt: new Date().toISOString()
+        completedAt: new Date().toISOString(),
+        damageMarkers: data.damageMarkers || [],
+        additionalNotes: data.additionalNotes || '',
+        photoSummary: {
+          exterior: data.exteriorPhotos ? Object.keys(data.exteriorPhotos).length : 0,
+          interior: data.interiorPhotos ? Object.keys(data.interiorPhotos).length : 0,
+          damage: data.damageMarkers?.length || 0
+        }
       };
       
       console.log('⚡ Payload size:', JSON.stringify(completionPayload).length, 'bytes (vs 50MB+ before!)');
@@ -792,8 +801,8 @@ export default function ProductionDeliveryWorkflow({
 
       setUploadProgress(50);
 
-      // ⚡ Call new lightweight endpoint
-      const response = await fetch(`/api/jobs/${job.id}/complete-collection`, {
+      // ⚡ Call delivery completion endpoint
+      const response = await fetch(`/api/deliveries/complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -818,12 +827,12 @@ export default function ProductionDeliveryWorkflow({
       console.log('⚡ Completion took <2 seconds using auto-saved data!');
 
       // 🛡️ CRASH RECOVERY: Clear all saved data and complete
-      localStorage.removeItem(`collection-${job.id}`); // FIX: Use job.id not job.jobNumber
-      await clearFromServer(job.id); // Clear server-side auto-saved collection data
+      localStorage.removeItem(`delivery-${job.id}`); // FIX: Use job.id not job.jobNumber
+      await clearFromServer(job.id); // Clear server-side auto-saved delivery data
       console.log('✅ CRASH RECOVERY: LocalStorage data cleared after successful completion');
       onComplete();
     } catch (error) {
-      console.error('Failed to complete collection:', error);
+      console.error('Failed to complete delivery:', error);
     } finally {
       setIsCompleting(false);
       setUploadProgress(0);
