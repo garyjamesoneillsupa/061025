@@ -5791,8 +5791,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const archive = archiver.default('zip', { zlib: { level: 9 } });
       
+      // Format dates as dd.MM.yy
+      const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().slice(-2);
+        return `${day}.${month}.${year}`;
+      };
+
+      const filename = `HMRC Export (${formatDate(startDate)} - ${formatDate(endDate)}).zip`;
+      
       res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename=HMRC_Export_${startDate}_${endDate}.zip`);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
 
       archive.pipe(res);
 
