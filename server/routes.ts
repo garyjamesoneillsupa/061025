@@ -5820,7 +5820,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const driverName = (expense.driver?.name || 'Unknown').replace(/\s+/g, '_');
               const expenseType = expense.type || 'other';
               const amount = parseFloat(expense.amount?.toString() || '0').toFixed(2);
-              const fileName = `${expenseDate}_${driverName}_${expenseType}_${amount}.jpg`;
+              
+              // Add (PassThroughCharge) suffix for fuel expenses
+              const isFuelExpense = ['petrol', 'diesel', 'charge', 'electric'].includes(expenseType.toLowerCase());
+              const passThroughLabel = isFuelExpense ? '(PassThroughCharge)' : '';
+              const fileName = `${expenseDate}_${driverName}_${expenseType}_${amount}${passThroughLabel}.jpg`;
               
               archive.file(receiptPath, { name: `receipts/${fileName}` });
             }
