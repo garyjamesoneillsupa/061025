@@ -138,7 +138,7 @@ export default function Reports() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `PL_Report_${format(startDate, 'yyyy-MM-dd')}_${format(endDate, 'yyyy-MM-dd')}.pdf`;
+      a.download = `OVM Report (${format(startDate, 'dd.MM.yy')} - ${format(endDate, 'dd.MM.yy')}).pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

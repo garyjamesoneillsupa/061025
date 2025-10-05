@@ -191,11 +191,11 @@ export class PLReportPDFService {
 
     // Column definitions
     const columns = [
-      { key: "jobNumber", label: "Job Number", width: 100 },
-      { key: "movementFee", label: "Revenue", width: 80, align: "right" as const },
-      { key: "fuelPassThrough", label: "Fuel (Pass-through)", width: 90, align: "right" as const },
-      { key: "otherExpenses", label: "Expenses", width: 80, align: "right" as const },
-      { key: "driverWage", label: "Wages (50%)", width: 80, align: "right" as const },
+      { key: "jobNumber", label: "Job", width: 90 },
+      { key: "movementFee", label: "Revenue", width: 85, align: "right" as const },
+      { key: "fuelPassThrough", label: "Fuel", width: 85, align: "right" as const },
+      { key: "otherExpenses", label: "Expenses", width: 85, align: "right" as const },
+      { key: "driverWage", label: "Wages", width: 85, align: "right" as const },
       { key: "netProfit", label: "Net Profit", width: 85, align: "right" as const },
     ];
 

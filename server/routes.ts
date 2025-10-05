@@ -5899,7 +5899,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { PLReportPDFService } = await import('./services/pl-report-pdf');
       const pdfBuffer = await PLReportPDFService.generateReport(reportData);
 
-      const filename = `PL_Report_${start.toISOString().split('T')[0]}_${end.toISOString().split('T')[0]}.pdf`;
+      // Format dates as dd.MM.yy
+      const formatDate = (date: Date) => {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().slice(-2);
+        return `${day}.${month}.${year}`;
+      };
+
+      const filename = `OVM Report (${formatDate(start)} - ${formatDate(end)}).pdf`;
       
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
