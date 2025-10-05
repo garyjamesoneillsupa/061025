@@ -5816,15 +5816,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const receiptExists = await fs.access(receiptPath).then(() => true).catch(() => false);
             
             if (receiptExists) {
-              const expenseDate = expense.createdAt ? new Date(expense.createdAt).toISOString().split('T')[0] : 'unknown';
-              const driverName = (expense.driver?.name || 'Unknown').replace(/\s+/g, '_');
-              const expenseType = expense.type || 'other';
+              // Format date as DD.MM.YY
+              const formatDate = (date: Date) => {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear().toString().slice(-2);
+                return `${day}.${month}.${year}`;
+              };
+              
+              const expenseDate = expense.createdAt ? formatDate(new Date(expense.createdAt)) : 'Unknown';
+              const driverName = expense.driver?.name || 'Unknown';
+              const expenseType = expense.type || 'Other';
+              const capitalizedType = expenseType.charAt(0).toUpperCase() + expenseType.slice(1);
               const amount = parseFloat(expense.amount?.toString() || '0').toFixed(2);
               
-              // Add (PassThroughCharge) suffix for fuel expenses
+              // Add (Pass-Through) suffix for fuel expenses
               const isFuelExpense = ['petrol', 'diesel', 'charge', 'electric'].includes(expenseType.toLowerCase());
-              const passThroughLabel = isFuelExpense ? '(PassThroughCharge)' : '';
-              const fileName = `${expenseDate}_${driverName}_${expenseType}_${amount}${passThroughLabel}.jpg`;
+              const passThroughLabel = isFuelExpense ? ' (Pass-Through)' : '';
+              const fileName = `${expenseDate} - ${driverName} - ${capitalizedType} - £${amount}${passThroughLabel}.jpg`;
               
               archive.file(receiptPath, { name: `receipts/${fileName}` });
             }
