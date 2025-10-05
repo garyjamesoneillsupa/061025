@@ -1,4 +1,4 @@
-// Flawless POD Generation - Exact User Specification Implementation
+// Flawless POC Generation - Exact User Specification Implementation
 import PDFDocument from "pdfkit";
 import path from "path";
 import fs from "fs";
@@ -14,7 +14,7 @@ export interface DamageMarker {
   photos: string[]; // Base64 photos from UI
 }
 
-export interface FlawlessPODData {
+export interface FlawlessPOCData {
   JOB_NUMBER: string;
   COLLECTION_DATE: string;
   COLLECTION_TIME: string;
@@ -51,13 +51,13 @@ export interface FlawlessPODData {
   DRIVER_ADDITIONAL_NOTES?: string; // Driver's notes entered at end of collection
 }
 
-export class FlawlessPODService {
+export class FlawlessPOCService {
   // Helper method to capitalize condition words properly
   static capitalizeCondition(text: string): string {
     return text.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
-  static async generatePOD(data: FlawlessPODData): Promise<Buffer> {
+  static async generatePOC(data: FlawlessPOCData): Promise<Buffer> {
     try {
       console.log(
         `🚀 PARALLEL POC: Starting optimized generation for ${data.JOB_NUMBER}`,
@@ -832,19 +832,19 @@ export class FlawlessPODService {
       const conditionsData = [
         {
           label: "Weather Conditions:",
-          value: FlawlessPODService.capitalizeCondition(
+          value: FlawlessPOCService.capitalizeCondition(
             data.WEATHER_CONDITIONS || "Dry",
           ),
         },
         {
           label: "Lighting Conditions:",
-          value: FlawlessPODService.capitalizeCondition(
+          value: FlawlessPOCService.capitalizeCondition(
             data.LIGHTING_CONDITIONS || "Good Light",
           ),
         },
         {
           label: "Vehicle Cleanliness:",
-          value: FlawlessPODService.capitalizeCondition(
+          value: FlawlessPOCService.capitalizeCondition(
             data.VEHICLE_CLEANLINESS || "Clean",
           ),
         },
