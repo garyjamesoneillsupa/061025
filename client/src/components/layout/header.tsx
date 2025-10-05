@@ -206,7 +206,7 @@ export default function Header() {
                   Audit Logs
                 </Button>
               </Link>
-              <Link href="/reports">
+              <Link href="/admin/reports">
                 <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)}>
                   <BarChart3 className="mr-2 h-4 w-4" />
                   Reports & Analytics
